@@ -1,7 +1,7 @@
 {
   "name": "Spider-Man Letture",
   "short_name": "Spidey",
-  "description": "Ordine di lettura di Amazing Spider-Man con progresso salvato sul dispositivo",
+  "description": "Ordine di lettura di Spider-Man con progresso salvato sul dispositivo",
   "lang": "it",
   "start_url": "./",
   "scope": "./",

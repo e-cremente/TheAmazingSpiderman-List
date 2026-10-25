@@ -1,33 +1,22 @@
 # Spider-Man Letture
 
-App web installabile (PWA) con l'ordine di lettura di Amazing Spider-Man. Funziona offline dopo la prima apertura e salva il progresso sul telefono.
+App web installabile (PWA) con l'ordine di lettura completo di Spider-Man, da Amazing Fantasy #15 a oggi, in italiano e inglese. Funziona offline dopo la prima apertura e salva il progresso sul telefono.
+
+Indirizzo: https://e-cremente.github.io/TheAmazingSpiderman-List/
 
 ## Contenuto
 
-- `index.html` — l'app
-- `manifest.webmanifest`, `sw.js` — installazione e funzionamento offline
-- `icons/`, `fonts/` — icona e caratteri, tutti in locale
+- `index.html`, `manifest.webmanifest`, `sw.js`: l'app, **generata** da `sorgenti/aggiorna.py`. Non va modificata a mano.
+- `icons/`, `fonts/`: icona e caratteri, tutti in locale.
+- `sorgenti/`: dati, generatori e interfaccia. Come aggiornare la lista è spiegato in `sorgenti/ISTRUZIONI.md`.
 
-## Metterla sul telefono
+## Installazione sul telefono
 
-Il telefono deve aprirla da un indirizzo HTTPS almeno una volta; poi resta installata e funziona senza rete.
+- **Android (Chrome):** apri l'indirizzo, poi menu ⋮ → "Installa app".
+- **iPhone (Safari):** apri l'indirizzo, poi Condividi → "Aggiungi alla schermata Home".
 
-### GitHub Pages (consigliato, gratis)
-
-1. Crea un repository pubblico su GitHub (es. `spidey-letture`).
-2. Carica il contenuto di questa cartella nella radice del repository.
-3. Settings → Pages → Source: "Deploy from a branch", branch `main`, cartella `/ (root)`.
-4. Dopo un minuto l'app è su `https://<tuo-utente>.github.io/spidey-letture/`.
-
-### Installazione
-
-- **Android (Chrome):** apri l'indirizzo → menu ⋮ → "Installa app" (o "Aggiungi a schermata Home").
-- **iPhone (Safari):** apri l'indirizzo → Condividi → "Aggiungi alla schermata Home".
+Gli aggiornamenti arrivano da soli: apri l'app con la connessione attiva, chiudila e riaprila. Il progresso non si perde.
 
 ## Spostare il progresso
 
-Nella pagina su claude.ai tocca **Copia backup**, poi nell'app sul telefono **Importa backup** e incolla il codice.
-
-## Aggiornare la lista
-
-Sostituisci `index.html` e cambia il nome della cache in `sw.js` (`spidey-v2` → `spidey-v3`), così il telefono scarica la versione nuova alla prossima apertura con connessione. Il progresso non si perde.
+Su un dispositivo tocca **Copia backup**, sull'altro **Importa backup** e incolla il codice.
