@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Spider-Man Letture</title>
+<meta name="theme-color" content="#f3f4f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111318" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Spidey">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+@font-face{font-family:"Barlow Condensed";font-weight:600;font-style:normal;font-display:swap;src:url(fonts/barlow-condensed-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-weight:800;font-style:normal;font-display:swap;src:url(fonts/barlow-condensed-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Sans";font-weight:400;font-style:normal;font-display:swap;src:url(fonts/ibm-plex-sans-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Sans";font-weight:500;font-style:normal;font-display:swap;src:url(fonts/ibm-plex-sans-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Sans";font-weight:600;font-style:normal;font-display:swap;src:url(fonts/ibm-plex-sans-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-weight:500;font-style:normal;font-display:swap;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2")}
+*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}
+/* Layout: colonna unica da "albo d'archivio" — fasi come capitoli, numeri come tessere da spuntare */
+:root{
+  --bg:#f3f4f7; --paper:#ffffff; --ink:#16181d; --muted:#5d6370; --line:#dde0e7;
+  --red:#c8202b; --red-soft:#fbe6e7; --blue:#1d4ea3; --blue-soft:#e3ebf8; --opt:#7a7f8c; --opt-soft:#eceef2;
+  --done:#16181d; --done-fg:#ffffff;
+  --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111318; --paper:#191c23; --ink:#eceef3; --muted:#a0a6b3; --line:#2b2f39;
+  --red:#ff5a62; --red-soft:#3a1c20; --blue:#7aa6ff; --blue-soft:#1a2740; --opt:#9aa0ad; --opt-soft:#242832;
+  --done:#eceef3; --done-fg:#111318; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111318; --paper:#191c23; --ink:#eceef3; --muted:#a0a6b3; --line:#2b2f39;
+  --red:#ff5a62; --red-soft:#3a1c20; --blue:#7aa6ff; --blue-soft:#1a2740; --opt:#9aa0ad; --opt-soft:#242832;
+  --done:#eceef3; --done-fg:#111318; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+header h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,7vw,3.6rem);line-height:.95;letter-spacing:.01em;text-transform:uppercase;margin:0;text-wrap:balance}
+header h1 span{color:var(--red)}
+.lede{color:var(--muted);max-width:62ch;margin:12px 0 0}
+.status{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;margin-top:18px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.bar{flex:1 1 220px;height:8px;background:var(--line);border-radius:4px;overflow:hidden;min-width:0}
+.bar i{display:block;height:100%;width:0;background:var(--red);transition:width .3s}
+.count{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.next{font-size:14px;flex-basis:100%}
+.next b{color:var(--red)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:18px 0 6px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;border:1.5px solid}
+.sw.asm{border-color:var(--line);background:var(--paper)}
+.sw.ess{border-color:var(--blue);background:var(--blue-soft)}
+.sw.opt{border-color:var(--opt);background:var(--opt-soft);border-style:dashed}
+section.phase{margin-top:34px}
+.ph-head{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.ph-num{font-family:var(--display);font-weight:800;font-size:2.4rem;line-height:1;color:var(--red)}
+.ph-head h2{font-family:var(--display);font-weight:800;font-size:1.65rem;text-transform:uppercase;letter-spacing:.02em;margin:0;line-height:1.1;text-wrap:balance}
+.yrs{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em}
+.ph-note{color:var(--muted);margin:6px 0 12px;max-width:65ch}
+.tiles{display:flex;flex-wrap:wrap;gap:6px}
+.t{font:500 13px/1 var(--mono);font-variant-numeric:tabular-nums;min-width:44px;height:38px;padding:0 9px;border-radius:5px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;position:relative}
+.t.ess{border-color:var(--blue);background:var(--blue-soft);color:var(--blue);font-family:var(--body);font-weight:600;font-size:12.5px}
+.t.opt{border-color:var(--opt);border-style:dashed;background:var(--opt-soft);color:var(--muted);font-family:var(--body);font-weight:500;font-size:12.5px}
+.t.key::after{content:"";position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.t[aria-pressed="true"]{background:var(--done);color:var(--done-fg);border-color:var(--done);border-style:solid}
+.t.is-next{outline:2px solid var(--red);outline-offset:2px}
+.t:focus-visible,.row:focus-within{outline:2px solid var(--red);outline-offset:2px}
+.keys{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:4px;font-size:13.5px}
+.keys li{display:flex;gap:8px}
+.keys b{font-family:var(--mono);font-weight:500;font-size:12.5px;color:var(--red);flex:0 0 auto;min-width:72px}
+.rows{display:grid;gap:6px}
+.row{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer}
+.row.ess{border-left:4px solid var(--blue)}
+.row.opt{border-left:4px dashed var(--opt)}
+.row input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--red);cursor:pointer}
+.row .lbl{font-weight:600;min-width:0}
+.row .tag{font:600 10.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;padding:3px 6px;border-radius:3px;margin-left:6px;vertical-align:2px}
+.row.ess .tag{background:var(--blue-soft);color:var(--blue)}
+.row.opt .tag{background:var(--opt-soft);color:var(--muted)}
+.row .sub{display:block;color:var(--muted);font-size:13.5px;font-weight:400;margin-top:2px}
+.row.checked .lbl{text-decoration:line-through;text-decoration-color:var(--red);opacity:.6}
+.row.is-next{box-shadow:0 0 0 2px var(--red)}
+.tips{margin-top:44px;border-top:2px solid var(--ink);padding-top:14px}
+.tips h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:1.4rem;margin:0 0 8px}
+.tips ul{padding-left:18px;margin:0;display:grid;gap:6px;max-width:68ch}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.tools button{font:500 13px var(--body);padding:8px 12px;border-radius:5px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.tools button:focus-visible{outline:2px solid var(--red)}
+.confirm{font-size:13px;color:var(--muted);flex-basis:100%}
+.impbox{display:grid;gap:8px;margin-top:12px;max-width:560px;font-size:13.5px;color:var(--muted)}
+.impbox textarea{font:12.5px var(--mono);padding:8px;border-radius:5px;border:1px solid var(--line);background:var(--paper);color:var(--ink);resize:vertical;min-width:0}
+.impbox button{justify-self:start;font:600 13px var(--body);padding:8px 14px;border-radius:5px;border:0;background:var(--red);color:#fff;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <h1>Amazing Spider-Man<br><span>da AF #15 a oggi</span></h1>
+  <p class="lede">Ordine di lettura completo, da Amazing Fantasy #15 fino all'ultimo numero uscito, #1001 di ottobre 2026. La serie principale resta la spina dorsale; gli albi esterni sono inseriti nel punto in cui uscirono. Tocca un numero per segnarlo come letto: il progresso resta salvato su questo dispositivo.</p>
+</header>
+
+<div class="status" aria-live="polite">
+  <div class="bar" aria-hidden="true"><i id="fill"></i></div>
+  <span class="count" id="count">0 / 0</span>
+  <span class="next" id="next"></span>
+</div>
+
+<div class="legend">
+  <span><i class="sw asm"></i>Amazing Spider-Man</span>
+  <span><i class="sw ess"></i>Fuori serie, da leggere</span>
+  <span><i class="sw opt"></i>Fuori serie, facoltativo</span>
+  <span><i class="sw" style="border:none;width:8px;height:8px;border-radius:50%;background:var(--red)"></i>Numero chiave</span>
+</div>
+
+<main id="phases"></main>
+
+<section class="tips">
+  <h2>Come usare la lista</h2>
+  <ul>
+    <li>Le fasi 0, 1 e 2 sono numero per numero. Dalla fase 3 in poi la lista va per archi narrativi, perché la serie supera i 1000 numeri e da lì in avanti Spider-Man ha più testate in parallelo.</li>
+    <li>Gli <b>Annual #6–9</b> sono quasi tutti ristampe: puoi saltarli.</li>
+    <li>Dal 1976 escono <i>Peter Parker, the Spectacular Spider-Man</i> e <i>Marvel Team-Up</i>, dal 1985 <i>Web of Spider-Man</i>. Non servono per seguire Amazing, salvo i crossover segnati in blu.</li>
+    <li>Per i grandi crossover multi-testata (Maximum Carnage, Clone Saga, Death Spiral) conviene aprire un ordine dedicato al momento di arrivarci: alternano numeri di Amazing con altre serie.</li>
+    <li>Con Marvel Unlimited trovi quasi tutto in digitale; in Italia Panini ristampa le storie classiche in volumi Omnibus ed Epic Collection.</li>
+  </ul>
+  <div class="tools">
+    <button type="button" id="copy">Copia backup</button>
+    <button type="button" id="imp">Importa backup</button>
+    <button type="button" id="reset">Azzera progresso</button>
+    <span class="confirm" id="confirm" hidden></span>
+  </div>
+  <div class="impbox" id="impbox" hidden>
+    <label for="imptext">Incolla qui il codice di backup copiato dall'altro dispositivo:</label>
+    <textarea id="imptext" rows="3"></textarea>
+    <button type="button" id="impgo">Carica progresso</button>
+  </div>
+</section>
+</div>
+
+<script>
+const range=(a,b,keys={})=>{const o=[];for(let i=a;i<=b;i++)o.push({id:'asm'+i,n:'#'+i,key:keys[i]});return o};
+const x=(id,n,kind,tip)=>({id,n,kind,tip});
+
+const PHASES=[
+ {num:0,title:'Le origini con Lee e Ditko',yrs:'1962 – 1965 · AF #15, #1–29',mode:'tiles',pre:true,
+  note:'Stan Lee e Steve Ditko creano il personaggio e quasi tutta la sua galleria di nemici. Nei primi due Annual escono storie lunghe inedite, tra cui il debutto dei Sinistri Sei.',
+  items:[x('af15','Amazing Fantasy #15','ess','1962: prima apparizione e origine di Spider-Man'),
+    ...range(1,4,{1:1,3:1}),
+    x('sta2','Strange Tales Annual #2','opt','1963: Spider-Man incontra la Torcia Umana nella sua serie'),
+    ...range(5,17,{9:1,13:1,14:1,15:1}),
+    x('ann1','Annual #1','ess','1964: prima apparizione dei Sinistri Sei'),
+    ...range(18,19),
+    x('av11','Avengers #11','opt','1964: Kang manda un falso Spider-Man contro i Vendicatori'),
+    ...range(20,28),
+    x('ann2','Annual #2','ess','1965: Spider-Man e il Dottor Strange'),
+    ...range(29,29)],
+  keys:[['#3','Prima apparizione del Dottor Octopus'],['#14','Prima apparizione del Green Goblin'],['Annual #1','I Sinistri Sei']]},
+ {num:1,title:'Fine dell\'era Ditko e arrivo di Romita',yrs:'1965 – 1971 · #30–100',mode:'tiles',
+  note:'Gli ultimi numeri di Steve Ditko (fino al #38), poi John Romita Sr. ai disegni. Gli speciali di questi anni contengono storie nuove e in continuity.',
+  items:[...range(30,37,{33:1}),
+    x('dd16','Daredevil 16–17','opt','Crossover con Daredevil, disegni di Romita: il suo "provino" prima di Amazing'),
+    ...range(38,41,{38:1,39:1,40:1}),
+    x('ann3','Annual #3','ess','1966: Spider-Man e i Vendicatori'),
+    ...range(42,53,{42:1,50:1}),
+    x('ann4','Annual #4','ess','1967: con la Torcia Umana contro Mysterio e il Mago'),
+    ...range(54,62),
+    x('spm1','Spectacular #1 (rivista)','ess','1968, rivista in bianco e nero con storia inedita'),
+    ...range(63,65),
+    x('ann5','Annual #5','ess','1968: il mistero dei genitori di Peter'),
+    x('spm2','Spectacular #2 (rivista)','ess','1968: storia lunga con il Goblin, legata alla continuity'),
+    ...range(66,100,{90:1,96:1,100:1})],
+  keys:[['#33','La sequenza del macchinario: il numero più celebre di Ditko'],['#38','Ultimo numero di Ditko'],['#39–40','Il Goblin scopre chi è Spider-Man e si rivela'],['#42','Prima vera apparizione di Mary Jane'],['#50','"Spider-Man No More!"'],['#90','Morte del capitano Stacy'],['#96–98','Il ciclo sulla droga pubblicato senza bollino del Comics Code']]},
+
+ {num:2,title:'Bronze Age: Conway, Wein, Wolfman',yrs:'1971 – 1980 · #101–200',mode:'tiles',
+  note:'Morbius, la morte di Gwen Stacy, il Punitore, la prima saga dei cloni. Dal 1972 esce Marvel Team-Up e dal 1976 Spectacular Spider-Man: sono serie parallele, non indispensabili per Amazing.',
+  items:[...range(101,120,{101:1}),
+    ...range(121,133,{121:1,122:1,129:1}),
+    x('gssh1','Giant-Size Super-Heroes #1','opt','1974: contro Morbius e l\'Uomo Lupo'),
+    x('gssm','Giant-Size Spider-Man #1–6','opt','1974–75, team-up in formato gigante'),
+    ...range(134,160,{149:1}),
+    x('ann10','Annual #10','ess','1976, storia inedita'),
+    ...range(161,200,{194:1,200:1})],
+  keys:[['#101','Prima apparizione di Morbius'],['#121–122','Morte di Gwen Stacy e del Goblin'],['#129','Prima apparizione del Punitore'],['#149','Il primo clone di Peter'],['#194','Prima apparizione della Gatta Nera'],['#200','Peter affronta il ladro che uccise zio Ben']]},
+
+ {num:3,title:'Hobgoblin, costume nero, matrimonio',yrs:'1980 – 1988 · #201–300',mode:'rows',
+  note:'Da qui la lista va per archi. Gli eventi esterni segnati in blu cambiano la serie principale: leggili nel punto indicato.',
+  items:[
+    {id:'p3a',lbl:'ASM #201–237',sub:'Fine di Wolfman, inizio di Roger Stern; #229–230 "Niente può fermare il Fenomeno"'},
+    {id:'p3b',lbl:'ASM #238–251',sub:'Esordio e mistero di Hobgoblin (Stern)'},
+    {id:'p3sw',kind:'ess',lbl:'Secret Wars #1–12',sub:'1984–85: Spider-Man trova il costume nero. Leggilo prima del #252, che uscì in anticipo sul finale'},
+    {id:'p3c',lbl:'ASM #252–262',sub:'Il costume nero si rivela un simbionte'},
+    {id:'p3w',kind:'opt',lbl:'Web of Spider-Man #1',sub:'1985: diretto seguito della vicenda del simbionte'},
+    {id:'p3j',kind:'opt',lbl:'Spectacular Spider-Man #107–110',sub:'"La morte di Jean DeWolff", uno dei classici del periodo'},
+    {id:'p3d',lbl:'ASM #263–292',sub:'Hobgoblin smascherato (#289); #290–292 la proposta a Mary Jane'},
+    {id:'p3ann',kind:'ess',lbl:'Amazing Spider-Man Annual #21',sub:'1987: il matrimonio di Peter e Mary Jane'},
+    {id:'p3k',kind:'ess',lbl:'L\'ultima caccia di Kraven',sub:'Web #31 → ASM #293 → Spectacular #131 → Web #32 → ASM #294 → Spectacular #132'},
+    {id:'p3e',lbl:'ASM #295–300',sub:'Arriva McFarlane; #300 prima apparizione completa di Venom'}]},
+
+ {num:4,title:'Gli anni \'90',yrs:'1988 – 1998 · #301–441',mode:'rows',
+  note:'Anni di grandi crossover tra le quattro testate di Spider-Man. Per quelli multi-testata segui un ordine dedicato quando ci arrivi.',
+  items:[
+    {id:'p4a',lbl:'ASM #301–325',sub:'Fine del ciclo McFarlane'},
+    {id:'p4b',lbl:'ASM #326–360',sub:'Acts of Vengeance (#326–329), Il ritorno dei Sinistri Sei (#334–339), Erik Larsen e poi Mark Bagley'},
+    {id:'p4c',lbl:'ASM #361–377',sub:'Prima apparizione di Carnage (#361–363), Peter ritrova i "genitori"'},
+    {id:'p4mc',kind:'ess',lbl:'Maximum Carnage (14 parti)',sub:'1993, attraversa tutte le testate: ASM #378–380 sono parte del crossover'},
+    {id:'p4d',lbl:'ASM #381–393',sub:'Gli ultimi numeri prima della Saga del Clone'},
+    {id:'p4cs',kind:'ess',lbl:'La Saga del Clone (ASM #394–418 circa)',sub:'1994–96, con Spectacular, Web, Spider-Man e varie miniserie. Il #400 contiene la morte di zia May. Serve un ordine dedicato'},
+    {id:'p4e',lbl:'ASM #419–441',sub:'Fine del volume 1; #441 chiude con il crossover "The Final Chapter"'}]},
+
+ {num:5,title:'Rilancio, Straczynski, One More Day',yrs:'1999 – 2008 · vol. 2 #1–58 → #500–545',mode:'rows',
+  note:'Nel 1999 la serie riparte dal #1. Dal 2003 Marvel torna alla numerazione storica: il vol. 2 #58 è seguito dal #500.',
+  items:[
+    {id:'p5a',lbl:'ASM vol. 2 #1–29',sub:'Howard Mackie e John Byrne'},
+    {id:'p5b',lbl:'ASM vol. 2 #30–58',sub:'J. Michael Straczynski e John Romita Jr.: Ezekiel, Morlun, zia May scopre il segreto (#35–38)'},
+    {id:'p5c',lbl:'ASM #500–524',sub:'#500, poi "Sins Past" (#509–514)'},
+    {id:'p5o',kind:'ess',lbl:'The Other',sub:'2005–06, 12 parti tra Friendly Neighborhood, Marvel Knights Spider-Man e ASM #525–528'},
+    {id:'p5d',lbl:'ASM #529–531',sub:'Il nuovo costume "Iron Spider"'},
+    {id:'p5cw',kind:'ess',lbl:'Civil War #1–7 con ASM #532–538',sub:'2006–07: Peter rivela l\'identità in pubblico. Alterna i numeri di ASM con la miniserie'},
+    {id:'p5e',lbl:'ASM #539–543 "Back in Black"',sub:'Il costume nero torna dopo la sparatoria a zia May'},
+    {id:'p5omd',kind:'ess',lbl:'One More Day',sub:'ASM #544 → Friendly Neighborhood #24 → Sensational #41 → ASM #545'}]},
+
+ {num:6,title:'Brand New Day e Big Time',yrs:'2008 – 2012 · #546–700',mode:'rows',
+  note:'Amazing diventa l\'unica testata di Spider-Man e per anni esce tre volte al mese: tutto ciò che serve è dentro la serie.',
+  items:[
+    {id:'p6a',lbl:'ASM #546–647 "Brand New Day"',sub:'Include "Grim Hunt" (#634–637) e "Origin of the Species"'},
+    {id:'p6b',lbl:'ASM #648–665 "Big Time"',sub:'Inizio del ciclo solitario di Dan Slott'},
+    {id:'p6c',lbl:'ASM #666–673 "Spider-Island"',sub:''},
+    {id:'p6d',lbl:'ASM #674–697',sub:'Include "Ends of the Earth" (#682–687)'},
+    {id:'p6e',lbl:'ASM #698–700 "Dying Wish"',sub:'Fine del volume 1 storico al #700'}]},
+
+ {num:7,title:'Superior e i volumi 3–4',yrs:'2013 – 2018 · #701–801',mode:'rows',
+  note:'Per un anno e mezzo Amazing si ferma: la storia prosegue in Superior Spider-Man, che va letta al suo posto.',
+  items:[
+    {id:'p7s',kind:'ess',lbl:'Superior Spider-Man #1–31',sub:'2013–14, il seguito diretto di ASM #700'},
+    {id:'p7a',lbl:'ASM vol. 3 #1–18 (+ #1.1–1.5)',sub:'Include l\'evento "Spider-Verse" (#9–15)'},
+    {id:'p7rv',kind:'opt',lbl:'ASM: Renew Your Vows #1–5',sub:'2015, realtà alternativa durante Secret Wars'},
+    {id:'p7b',lbl:'ASM vol. 4 #1–32',sub:'Peter alla guida delle Parker Industries; "Dead No More" (#19–24) con la miniserie The Clone Conspiracy'},
+    {id:'p7c',lbl:'ASM #789–801',sub:'Ritorno alla numerazione storica; "Go Down Swinging" (#797–800) chiude il ciclo di Slott'}]},
+
+ {num:8,title:'Spencer, Beyond, Wells',yrs:'2018 – 2024 · #802–964',mode:'rows',
+  note:'',
+  items:[
+    {id:'p8a',lbl:'ASM vol. 5 #1–74',sub:'Nick Spencer: include "Hunted" e "Sinister War" (con la miniserie Sinister War #1–4)'},
+    {id:'p8b',lbl:'ASM vol. 5 #75–93 "Beyond"',sub:'Uscite quasi settimanali, protagonista Ben Reilly'},
+    {id:'p8c',lbl:'ASM vol. 6 #1–60',sub:'Zeb Wells e John Romita Jr.: Dark Web, poi "Gang War" (con la miniserie Gang War #1–6)'},
+    {id:'p8d',lbl:'ASM vol. 6 #61–70',sub:'Joe Kelly, include "Le 8 morti di Spider-Man"'}]},
+
+ {num:9,title:'Joe Kelly e il #1000',yrs:'2025 – oggi · #965–1001',mode:'rows',
+  note:'Il volume attuale, partito ad aprile 2025. Dopo il #35 la serie è passata direttamente al #1000 (30 settembre 2026).',
+  items:[
+    {id:'p9a',lbl:'ASM vol. 7 #1–22',sub:'Kelly con Pepe Larraz e John Romita Jr.: Hellgate, i due Spider-Man, Peter nello spazio'},
+    {id:'p9ds',kind:'ess',lbl:'Death Spiral',sub:'2026, crossover con Venom: ASM/Venom: Death Spiral #1, ASM #23–27 alternati a Venom, epilogo Body Count #1'},
+    {id:'p9b',lbl:'ASM vol. 7 #28–35',sub:'Avvicinamento al #1000'},
+    {id:'p9ann',kind:'opt',lbl:'Amazing Spider-Man Annual (2026) #1',sub:''},
+    {id:'p9c',lbl:'ASM #1000',sub:'Numero celebrativo con storie di autori storici'},
+    {id:'p9d',lbl:'ASM #1001',sub:'14 ottobre 2026, l\'ultimo uscito: da qui segui le uscite mensili'}]}
+];
+
+const KEY='spidey-read-v1';
+// Già letti prima di iniziare la lista: tutto il blocco 0 tranne gli albi facoltativi
+const PRE=[];
+PHASES.filter(p=>p.pre).forEach(p=>p.items.forEach(it=>{if(it.kind!=='opt')PRE.push(it.id)}));
+const defaults=()=>{const o={};PRE.forEach(id=>o[id]=true);return o};
+let read={};
+try{read=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){read={}}
+PRE.forEach(id=>{if(read[id]===undefined)read[id]=true});
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(read))}catch(e){}};
+save();
+
+const all=[];
+const host=document.getElementById('phases');
+PHASES.forEach(p=>{
+  const s=document.createElement('section');s.className='phase';
+  s.innerHTML=`<div class="ph-head"><span class="ph-num">${p.num}</span><h2>${p.title}</h2><span class="yrs">${p.yrs}</span></div>`+(p.note?`<p class="ph-note">${p.note}</p>`:'');
+  if(p.mode==='tiles'){
+    const box=document.createElement('div');box.className='tiles';
+    p.items.forEach(it=>{
+      const b=document.createElement('button');b.type='button';
+      b.className='t'+(it.kind?' '+it.kind:'')+(it.key?' key':'');
+      b.textContent=it.n;
+      b.title=it.tip||('Amazing Spider-Man '+it.n);
+      b.setAttribute('aria-label',(it.tip?it.n+': '+it.tip:'Amazing Spider-Man '+it.n));
+      b.addEventListener('click',()=>{read[it.id]=!read[it.id];save();refresh()});
+      box.appendChild(b);all.push({id:it.id,el:b,label:it.kind?it.n:'Amazing Spider-Man '+it.n,tile:true});
+    });
+    s.appendChild(box);
+    if(p.keys){const ul=document.createElement('ul');ul.className='keys';
+      p.keys.forEach(([a,b])=>{const li=document.createElement('li');li.innerHTML=`<b>${a}</b><span>${b}</span>`;ul.appendChild(li)});
+      s.appendChild(ul)}
+  }else{
+    const box=document.createElement('div');box.className='rows';
+    p.items.forEach(it=>{
+      const l=document.createElement('label');l.className='row'+(it.kind?' '+it.kind:'');
+      const tag=it.kind==='ess'?'<span class="tag">da leggere</span>':it.kind==='opt'?'<span class="tag">facoltativo</span>':'';
+      l.innerHTML=`<input type="checkbox" id="c-${it.id}"><span class="lbl">${it.lbl}${tag}${it.sub?`<span class="sub">${it.sub}</span>`:''}</span>`;
+      const cb=l.querySelector('input');
+      cb.addEventListener('change',()=>{read[it.id]=cb.checked;save();refresh()});
+      box.appendChild(l);all.push({id:it.id,el:l,cb,label:it.lbl});
+    });
+    s.appendChild(box);
+  }
+  host.appendChild(s);
+});
+
+function refresh(){
+  let done=0,last=-1;
+  all.forEach((a,i)=>{
+    const r=!!read[a.id];if(r){done++;last=i}
+    if(a.tile)a.el.setAttribute('aria-pressed',r?'true':'false');
+    else{a.cb.checked=r;a.el.classList.toggle('checked',r)}
+    a.el.classList.remove('is-next');
+  });
+  // Il prossimo è il primo non letto dopo l'ultimo letto; se dopo non c'è nulla, il primo rimasto indietro
+  let next=all.slice(last+1).find(a=>!read[a.id])||all.find(a=>!read[a.id])||null;
+  if(next)next.el.classList.add('is-next');
+  document.getElementById('count').textContent=done+' / '+all.length;
+  document.getElementById('fill').style.width=(done/all.length*100)+'%';
+  document.getElementById('next').innerHTML=next?'Prossimo: <b>'+next.label+'</b>':'Hai finito tutto, complimenti.';
+}
+refresh();
+
+const rb=document.getElementById('reset'),cf=document.getElementById('confirm');let armed=false;
+const say=t=>{cf.hidden=false;cf.textContent=t};
+rb.addEventListener('click',()=>{
+  if(!armed){armed=true;rb.textContent='Conferma azzeramento';say('Tocca di nuovo: resteranno segnati solo i numeri fino al #29.');return}
+  read=defaults();save();refresh();armed=false;rb.textContent='Azzera progresso';say('Progresso azzerato.');
+});
+const code=()=>'SPIDEY1:'+all.filter(a=>read[a.id]).map(a=>a.id).join(',');
+document.getElementById('copy').addEventListener('click',()=>{
+  const c=code();
+  const fallback=()=>{const box=document.getElementById('impbox'),ta=document.getElementById('imptext');box.hidden=false;ta.value=c;ta.select();say('Copia manualmente il testo selezionato qui sotto.')};
+  try{navigator.clipboard.writeText(c).then(()=>say('Backup copiato: incollalo nell\'altro dispositivo con "Importa backup".'),fallback)}catch(e){fallback()}
+});
+document.getElementById('imp').addEventListener('click',()=>{const box=document.getElementById('impbox');box.hidden=!box.hidden;if(!box.hidden){document.getElementById('imptext').value='';document.getElementById('imptext').focus()}});
+document.getElementById('impgo').addEventListener('click',()=>{
+  const t=document.getElementById('imptext').value.trim();
+  if(!t.startsWith('SPIDEY1:')){say('Il codice non è valido: deve iniziare con SPIDEY1:');return}
+  const ids=new Set(t.slice(8).split(',').filter(Boolean));
+  read={};all.forEach(a=>{read[a.id]=ids.has(a.id)});save();refresh();
+  document.getElementById('impbox').hidden=true;say('Progresso caricato: '+ids.size+' voci segnate come lette.');
+});
+</script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
