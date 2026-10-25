@@ -329,8 +329,9 @@ refresh();
 const rb=document.getElementById('reset'),cf=document.getElementById('confirm');let armed=false;
 const say=t=>{cf.hidden=false;cf.textContent=t};
 rb.addEventListener('click',()=>{
-  if(!armed){armed=true;rb.textContent='Conferma azzeramento';say('Tocca di nuovo: resteranno segnati solo i numeri fino al #29.');return}
-  read=defaults();save();refresh();armed=false;rb.textContent='Azzera progresso';say('Progresso azzerato.');
+  if(!armed){armed=true;rb.textContent='Conferma azzeramento';say('Tocca di nuovo per togliere tutte le spunte, compresi i numeri fino al #29.');return}
+  // Salva ogni voce come non letta, così alla riapertura la fase 0 non torna spuntata
+  read={};all.forEach(a=>{read[a.id]=false});save();refresh();armed=false;rb.textContent='Azzera progresso';say('Progresso azzerato.');
 });
 const code=()=>'SPIDEY1:'+all.filter(a=>read[a.id]).map(a=>a.id).join(',');
 document.getElementById('copy').addEventListener('click',()=>{
