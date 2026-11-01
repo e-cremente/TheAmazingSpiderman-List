@@ -75,7 +75,8 @@ add('a22-65d', "ASM'22 65.DEATHS", 'asm', M('2025-01') + .5); add('a22-68d', "AS
 series('a25-', "ASM'25", 'asm', range(1, 36), [(1,'2025-04'),(22,'2026-02'),(23,'2026-03'),(27,'2026-04'),(28,'2026-05'),(35,'2026-08')], keys=(1,),
        tips={1: T('Joe Kelly e Pepe Larraz', 'Joe Kelly and Pepe Larraz')})
 add('asm1000', '#1000', 'asm', M('2026-09'), key=True, tip=T('Numero celebrativo con storie di autori storici', 'Anniversary issue with stories by classic creators'))
-add('asm1001', '#1001', 'asm', M('2026-10'), tip=T('14 ottobre 2026, l\'ultimo uscito', 'October 14, 2026, the latest issue'))
+add('asm1001', '#1001', 'asm', M('2026-10'), tip=T('Spider-Man contro Ravage', 'Spider-Man vs. Ravage'))
+add('asm1002', '#1002', 'asm', M('2026-10') + .95, tip=T('28 ottobre 2026, l\'ultimo uscito', 'October 28, 2026, the latest issue'))
 for y in ('2015','2017','2018','2019','2021','2023'): add(f'ann{y}', f'Annual {y}', 'asm', M(f'{y}-08'), kind='ess', rot=9)
 add('p9ann', 'Annual 2026', 'asm', M('2026-06'), kind='ess', rot=9)
 
@@ -145,6 +146,11 @@ for iid, label, date in [
     ('webs24','Web of Spider-Man (2024)','2024-03'),('shadowgg','Shadow of the Green Goblin #1–4','2024-04'),('blacksuit','Black Suit & Blood #1–4','2024-08'),
     ('versity','Spider-Versity #1–5','2026-04')]:
     one(iid, label, date)
+for iid, label, date, tip in [
+    ('punvssm','Punisher vs. Spider-Man #1–5','2026-07',T('Subito dopo il primo incontro con il Punitore in ASM #129','Right after the first meeting with the Punisher in ASM #129')),
+    ('smhulkfb','Spider-Man/Hulk: Fire and Brimstone #1–5','2026-08',T('Ambientata nei primi anni di Spider-Man e Hulk','Set in the early years of Spider-Man and the Hulk')),
+    ('halloween26','ASM: Halloween Special','2026-10',T('Spider-Man contro Hallows\' Eve','Spider-Man vs. Hallows\' Eve'))]:
+    one(iid, label, date, tip=tip)
 for iid, label, date, tip in [
     ('blue','Spider-Man: Blue #1–6','2002-07',T('Peter ricorda Gwen Stacy','Peter remembers Gwen Stacy')),
     ('evilmen','Black Cat: The Evil That Men Do #1–6','2002-08',T('Completata solo nel 2006','Only completed in 2006')),
